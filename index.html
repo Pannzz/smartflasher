@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Smart Flasher UI - Local Dev</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card: #151515;
+      --accent: linear-gradient(135deg, #00f2fe, #7000ff);
+      --border: #222;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .copyright {
+      font-size: 11px;
+      color: #444;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+    h2 {
+      font-weight: 900;
+      font-size: 22px;
+      background: linear-gradient(to right, #00f2fe, #7000ff, #00f2fe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
+      margin-top: 0;
+      text-align: center;
+    }
+    .tabs {
+      display: flex;
+      width: 100%;
+      max-width: 400px;
+      background: #1a1a1a;
+      border-radius: 15px;
+      padding: 5px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      color: #666;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      text-align: center;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 10px;
+    }
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: var(--card);
+      border-radius: 25px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      box-sizing: border-box;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 120px);
+      max-height: calc(100vh - 120px);
+    }
+    .scroll-area {
+      overflow-y: auto;
+      flex-grow: 1;
+      padding-right: 2px;
+    }
+    .scroll-area::-webkit-scrollbar {
+      display: none;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr ;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .mode-btn {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      color: #aaa;
+      padding: 16px 8px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.15s ease;
+    }
+    .mode-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+    }
+    .indep-toggle {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      color: #aaa;
+      padding: 10px 8px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.15s ease;
+      width: 100%;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+    .indep-toggle.active {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+    }
+    .slider-box {
+      background: rgba(255, 255, 255, 0);
+      border-radius: 18px;
+      padding: 15px;
+      margin-top: 15px;
+      border: 1px solid var(--border);
+      text-align: left;
+      flex-shrink: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      color: #00f2fe;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .val-text {
+      color: #00f2fe;
+    }
+    .row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .row3 {
+      display: grid;
+      grid-template-columns: repeat(1, 170px);
+      height: 200px;
+      overflow-y: auto;
+      gap: 12px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .side-label {
+      text-align: center;
+      font-weight: bold;
+      color: #777;
+      font-size: 12px;
+      background: #1e1e1e;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #2c2c2e;
+      border-radius: 8px;
+      outline: none;
+      margin: 6px 0;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      border: 3px solid #00f2fe;
+      cursor: pointer;
+      box-shadow: 0 0 8px #00f2fe;
+    }
+    label {
+      font-size: 11px;
+      color: #888;
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+      text-transform: uppercase;
+    }
+    input[type=text], input[type=password] {
+      width: 100%;
+      padding: 14px;
+      margin: 8px 0 15px 0;
+      border-radius: 12px;
+      border: 1px solid #333;
+      background: #000;
+      color: #fff;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+    .save-btn {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 15px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    .ota-link {
+      display: block;
+      text-align: center;
+      margin-top: 25px;
+      color: #555;
+      text-decoration: none;
+      font-size: 12px;
+      border: 1px solid #222;
+      padding: 12px;
+      border-radius: 12px;
+      text-transform: uppercase;
+    }
+
+    /* Helper CSS untuk Lokal Dev */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+  <div class="copyright">&copy; 2026 irfan.maulanaa._</div>
+  <h2>SMART FLASHER</h2>
+  
+  <!-- Navigation Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('depan')">DEPAN</button>
+    <button class="tab-btn" onclick="switchTab('belakang')">BELAKANG</button>
+    <button class="tab-btn" onclick="switchTab('hazard')">HAZARD</button>
+    <button class="tab-btn" onclick="switchTab('settings')">SETTING</button>
+  </div>
+
+    <div class="container">
+    <div class="scroll-area">
+      
+      <!-- TAB DEPAN -->
+      <div id="tab-depan" class="tab-content active">
+        <button id="btn-indep-depan" class="indep-toggle" onclick="toggleIndep('depan')">INDEPENDENT : OFF</button>
+        
+        <!-- Mode Standard -->
+        <div id="depan-standard">
+        <div class="scroll-area">
+          <div class="grid">
+            <button class="mode-btn active" onclick="setMode('depan', 0, this)">NORMAL</button>
+            <button class="mode-btn" onclick="setMode('depan', 1, this)">CEPAT</button>
+            <button class="mode-btn" onclick="setMode('depan', 2, this)">DOUBLE</button>
+            <button class="mode-btn" onclick="setMode('depan', 3, this)">BLITZ</button>
+            <button class="mode-btn" onclick="setMode('depan', 4, this)">FADE IN</button>
+            <button class="mode-btn" onclick="setMode('depan', 5, this)">FADE OUT</button>
+            <button class="mode-btn" style="grid-column: span 2;" onclick="setMode('depan', 6, this)">POLA 2 - 4</button>
+          </div>
+          <div class="slider-box">
+            <div class="label-row">
+              <span>JEDA / SPEED</span>
+              <span class="val-text" id="vD">500 ms</span>
+            </div>
+            <input type="range" min="50" max="1500" value="500" oninput="updateVal('vD', this.value, '/sd')">
+          </div>
+        </div>
+        </div>
+          
+
+        <!-- Mode Independent (Hidden Default) -->
+        <div id="depan-indep" style="display: none;">
+          <div class="row2"><div class="side-label">KIRI</div><div class="side-label">KANAN</div></div>
+          <div class="grid" style="overflow-y: auto; height:380px;">
+            <div class="grid2">
+            <button class="mode-btn active" onclick="setMode('depankiri', 0, this)">NORMAL</button>
+            <button class="mode-btn" onclick="setMode('depankiri', 1, this)">CEPAT</button>
+            <button class="mode-btn" onclick="setMode('depankiri', 2, this)">DOUBLE</button>
+            <button class="mode-btn" onclick="setMode('depankiri', 3, this)">BLITZ</button>
+            <button class="mode-btn" onclick="setMode('depankiri', 4, this)">FADE IN</button>
+            <button class="mode-btn" onclick="setMode('depankiri', 5, this)">FADE OUT</button>
+            <button class="mode-btn" onclick="setMode('depankiri', 6, this)">POLA 2-4</button>
+          </div>
+          <div class="grid2" ">
+            <button class="mode-btn active" onclick="setMode('depankanan', 0, this)">NORMAL</button>
+            <button class="mode-btn" onclick="setMode('depankanan', 1, this)">CEPAT</button>
+            <button class="mode-btn" onclick="setMode('depankanan', 2, this)">DOUBLE</button>
+            <button class="mode-btn" onclick="setMode('depankanan', 3, this)">BLITZ</button>
+            <button class="mode-btn" onclick="setMode('depankanan', 4, this)">FADE IN</button>
+            <button class="mode-btn" onclick="setMode('depankanan', 5, this)">FADE OUT</button>
+            <button class="mode-btn" onclick="setMode('depankanan', 6, this)">POLA 2-4</button>
+          </div>
+          </div>
+          <div class="grid">
+          <div class="slider-box">
+            <div class="label-row"><span>JEDA KIRI</span><span class="val-text" id="vDL">500 ms</span></div>
+            <input type="range" min="50" max="1500" value="500" oninput="updateVal('vDL', this.value, '/sdl')">
+          </div>
+          <div class="slider-box">
+            <div class="label-row"><span>JEDA KANAN</span><span class="val-text" id="vDR">500 ms</span></div>
+            <input type="range" min="50" max="1500" value="500" oninput="updateVal('vDR', this.value, '/sdr')">
+          </div>
+        </div>
+      </div>
+     </div> 
+
+      <!-- TAB BELAKANG -->
+      <div id="tab-belakang" class="tab-content">
+        <button id="btn-indep-belakang" class="indep-toggle" onclick="toggleIndep('belakang')">INDEPENDENT : OFF</button>
+
+        <div id="belakang-standard">
+        <div class="grid">
+          <button class="mode-btn active" onclick="setMode('belakang', 0, this)">NORMAL</button>
+          <button class="mode-btn" onclick="setMode('belakang', 1, this)">CEPAT</button>
+          <button class="mode-btn" onclick="setMode('belakang', 2, this)">DOUBLE</button>
+          <button class="mode-btn" onclick="setMode('belakang', 3, this)">BLITZ</button>
+          <button class="mode-btn" onclick="setMode('belakang', 4, this)">FADE IN</button>
+          <button class="mode-btn" onclick="setMode('belakang', 5, this)">FADE OUT</button>
+          <button class="mode-btn" style="grid-column: span 2;" onclick="setMode('belakang', 6, this)">POLA 2 - 4</button>
+        </div>
+        <div class="slider-box">
+          <div class="label-row">
+            <span>JEDA / SPEED</span>
+            <span class="val-text" id="vB">500 ms</span>
+          </div>
+          <input type="range" min="50" max="1500" value="500" oninput="updateVal('vB', this.value, '/sb')">
+        </div>
+      </div>
+    </div>
+
+      <!-- TAB HAZARD -->
+      <div id="tab-hazard" class="tab-content">
+        <div class="grid">
+          <button class="mode-btn active" onclick="setMode('hazard', 0, this)">NORMAL</button>
+          <button class="mode-btn" onclick="setMode('hazard', 1, this)">CEPAT</button>
+          <button class="mode-btn" onclick="setMode('hazard', 2, this)">DOUBLE</button>
+          <button class="mode-btn" onclick="setMode('hazard', 3, this)">BLITZ</button>
+          <button class="mode-btn" onclick="setMode('hazard', 4, this)">FADE IN</button>
+          <button class="mode-btn" onclick="setMode('hazard', 5, this)">FADE OUT</button>
+          <button class="mode-btn" style="grid-column: span 2;" onclick="setMode('hazard', 6, this)">POLA 2 - 4</button>
+        </div>
+        <div class="slider-box">
+          <div class="label-row">
+            <span>JEDA / SPEED</span>
+            <span class="val-text" id="vH">500 ms</span>
+          </div>
+          <input type="range" min="50" max="1500" value="500" oninput="updateVal('vH', this.value, '/sh')">
+        </div>
+      </div>
+
+      <!-- TAB SETTING -->
+      <div id="tab-settings" class="tab-content">
+        <form onsubmit="event.preventDefault(); alert('Simpan WiFi di simulasikan di lokal!');">
+          <label>SSID WIFI</label>
+          <input type="text" name="ssid" value="SMARTFLASHER">
+          <label>PASSWORD</label>
+          <input type="password" name="pass" value="12345678">
+          <button class="save-btn">SIMPAN & RESTART</button>
+        </form>
+        <a href="#" class="ota-link" onclick="alert('Menu OTA Update (Lokal Simulasi)')">ENTER FIRMWARE UPDATE (OTA)</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Logika Ganti Tab tanpa Reload Halaman
+    function switchTab(tabName) {
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(c => c.classList.remove('active'));
+
+      const btns = document.querySelectorAll('.tab-btn');
+      btns.forEach(b => b.classList.remove('active'));
+
+      document.getElementById('tab-' + tabName).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    // Toggle Independent Mode lokal
+    function toggleIndep(section) {
+      const btn = document.getElementById('btn-indep-' + section);
+      const isIndep = btn.classList.toggle('active');
+      btn.innerText = 'INDEPENDENT : ' + (isIndep ? 'ON' : 'OFF');
+
+      if (section === 'depan') {
+        document.getElementById('depan-standard').style.display = isIndep ? 'none' : 'block';
+        document.getElementById('depan-indep').style.display = isIndep ? 'block' : 'none';
+      }
+      if (section === 'belakang') {
+        document.getElementById('belakang-standard').style.display = isIndep ? 'none' : 'block';
+        document.getElementById('belakang-indep').style.display = isIndep ? 'block' : 'none';
+      }
+      go(section === 'depan' ? '/td' : '/tb');
+    }
+
+    // Logika Ganti Status Active pada Tombol Mode
+    function setMode(section, modeIndex, btnEl) {
+      const parentGrid = btnEl.parentElement;
+      const buttons = parentGrid.querySelectorAll('.mode-btn');
+      buttons.forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+
+      const pathMap = { depan: '/md', belakang: '/mb', hazard: '/mh', depankiri: '/mdl', depankanan: '/mdr', belakangkiri: '/mbl', belakangkanan: '/mbr' };
+      go(pathMap[section] + '?m=' + modeIndex);
+    }
+
+    // Fungsi Fetch dengan proteksi lokal (Aman jika dipanggil tanpa server ESP8266)
+    function go(u) {
+      console.log('Sending API call to ESP8266:', u);
+      fetch(u).catch(err => console.log('Development Mode (No ESP Connected):', u));
+    }
+
+    function updateVal(id, v, u) {
+      document.getElementById(id).innerText = v + ' ms';
+      fetch(u + '?v=' + v).catch(err => console.log('Development Mode (Slider):', u + '?v=' + v));
+    }
+  </script>
+</body>
+</html>
